@@ -1,67 +1,85 @@
 # megafarma
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Este projeto é um sistema acadêmico desenvolvido para a disciplina de *JAVA* na FIAP. O objetivo é aplicar conceitos de desenvolvimento backend utilizando o framework Quarkus, explorando práticas modernas de APIs REST, persistência e empacotamento de aplicações Java.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+## 🏗️ Sobre a estrutura
 
-## Running the application in dev mode
+O projeto implementa uma API REST para consulta de remédios, utilizando a seguinte estrutura de classes:
 
-You can run your application in dev mode that enables live coding using:
+- 💊 **RemedioTO.java**: Classe de transferência de dados (TO - Transfer Object) que representa o remédio, com atributos como código, nome, preço, data de fabricação e validade.
+- 🗄️ **RemedioDAO.java**: Responsável por simular o acesso a dados, retornando uma lista de remédios pré-cadastrados em memória.
+- ⚙️ **RemedioBO.java**: Camada de regras de negócio (BO - Business Object), que faz a ponte entre o DAO e a camada de recursos REST.
+- 🌐 **RemedioResource.java**: Classe que expõe o endpoint REST `/megafarma`, permitindo consultar todos os remédios cadastrados via requisição HTTP GET.
 
-```shell script
+Esse fluxo segue boas práticas de separação de responsabilidades, facilitando a manutenção e evolução do sistema.
+
+## 🚀 Sobre o Quarkus
+
+Este projeto utiliza o Quarkus, o Supersonic Subatomic Java Framework. O Quarkus é focado em oferecer alta performance, baixo consumo de memória e inicialização rápida, sendo ideal para aplicações cloud-native e microsserviços.
+
+Saiba mais em: <https://quarkus.io/>
+
+## 🛠️ Como rodar a aplicação em modo desenvolvimento
+
+Você pode rodar a aplicação em modo dev, que permite live coding, usando:
+
+```shell
 ./mvnw quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+> **Nota:** O Quarkus possui uma Dev UI disponível apenas em modo dev: <http://localhost:8080/q/dev/>
 
-## Packaging and running the application
+## 📦 Empacotando e executando a aplicação
 
-The application can be packaged using:
+Para empacotar a aplicação:
 
-```shell script
+```shell
 ./mvnw package
 ```
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+O comando acima gera o arquivo `quarkus-run.jar` em `target/quarkus-app/`.
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+Para rodar:
 
-If you want to build an _über-jar_, execute the following command:
+```shell
+java -jar target/quarkus-app/quarkus-run.jar
+```
 
-```shell script
+Se quiser gerar um _über-jar_ (jar único com dependências):
+
+```shell
 ./mvnw package -Dquarkus.package.jar.type=uber-jar
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+E execute com:
 
-## Creating a native executable
+```shell
+java -jar target/*-runner.jar
+```
 
-You can create a native executable using:
+## 🧊 Criando um executável nativo
 
-```shell script
+Para criar um executável nativo (requer GraalVM):
+
+```shell
 ./mvnw package -Dnative
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+Ou, para buildar em container (sem GraalVM local):
 
-```shell script
+```shell
 ./mvnw package -Dnative -Dquarkus.native.container-build=true
 ```
 
-You can then execute your native executable with: `./target/megafarma-1.0.0-SNAPSHOT-runner`
+O executável estará em `./target/megafarma-1.0.0-SNAPSHOT-runner`
 
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
+Mais informações: <https://quarkus.io/guides/maven-tooling>
 
-## Related Guides
+## 📚 Guias úteis do Quarkus
 
-- REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
+- REST: <https://quarkus.io/guides/rest>
+- REST Jackson: <https://quarkus.io/guides/rest#json-serialisation>
 
-## Provided Code
+---
 
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+Projeto acadêmico - FIAP | Engenharia de Software
