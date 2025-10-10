@@ -1,12 +1,19 @@
 package br.com.fiap.to;
 
+import jakarta.validation.constraints.*;
+
 import java.time.LocalDate;
 
 public class RemedioTO {
     private Long codigo;
+    @NotBlank
     private String nome;
+    @NotNull
+    @PositiveOrZero
     private Double preco;
+    @PastOrPresent
     private LocalDate dataDeFabricacao;
+    @FutureOrPresent
     private LocalDate dataDeValidade;
 
     public RemedioTO(Long codigo, String nome, Double preco, LocalDate dataDeFabricacao, LocalDate dataDeValidade) {
