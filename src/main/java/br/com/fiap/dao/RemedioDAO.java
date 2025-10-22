@@ -97,7 +97,7 @@ public class RemedioDAO {
     }
 
     public RemedioTO update(RemedioTO remedio) {
-        String sql = "update ddd+remedios set nome=?, preco=?, data_de_fabricacao=?, data_de_validade=? where codigo=?";
+        String sql = "update ddd_remedios set nome=?, preco=?, data_de_fabricacao=?, data_de_validade=? where codigo=?";
         try (PreparedStatement ps = ConnectionFactory.getConnection().prepareStatement(sql)) {
             ps.setString(1, remedio.getNome());
             ps.setDouble(2, remedio.getPreco());
