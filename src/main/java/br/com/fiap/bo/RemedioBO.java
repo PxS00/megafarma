@@ -34,4 +34,10 @@ public class RemedioBO {
         // Lógica de negócio pode ser adicionada aqui
         return remedioDAO.delete(codigo);
     }
+
+    public RemedioTO update(RemedioTO remedio){
+        remedioDAO = new RemedioDAO();
+        // Lógica de negócio pode ser adicionada aqui
+        return remedioDAO.update(remedio);
+    }
 }
