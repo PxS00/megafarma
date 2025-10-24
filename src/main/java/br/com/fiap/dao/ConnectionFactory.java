@@ -27,9 +27,9 @@ public class ConnectionFactory {
             }
             Class.forName("oracle.jdbc.driver.OracleDriver");
 
-            String url = dotenv.get("DB_URL");
-            String user = dotenv.get("DB_USER");
-            String password = dotenv.get("DB_PASSWORD");
+            String url = System.getenv("DB_URL");
+            String user = System.getenv("DB_USER");
+            String password = System.getenv("DB_PASSWORD");
 
             if (url == null || user == null || password == null) {
                 throw new RuntimeException("As variáveis do Banco não estão configuradas corretamente");
