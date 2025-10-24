@@ -9,6 +9,7 @@ WORKDIR /app
 COPY . ./
 
 # Build the app.
+RUN chmod +x mvnw
 RUN ./mvnw -DoutputFile=target/mvn-dependency-list.log -B -DskipTests clean dependency:list install
 
 # Run the quarkus app 
