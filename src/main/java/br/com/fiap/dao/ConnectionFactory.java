@@ -32,7 +32,7 @@ public class ConnectionFactory {
             String password = dotenv.get("DB_PASSWORD");
 
             if (url == null || user == null || password == null) {
-                throw new IllegalStateException("As variáveis de ambiente DB_URL, DB_USER ou DB_PASSWORD não estão definidas no arquivo .env.");
+                throw new RuntimeException("As variáveis do Banco não estão configuradas corretamente");
             }
 
             connection = DriverManager.getConnection(url, user, password);
