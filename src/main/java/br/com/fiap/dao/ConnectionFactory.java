@@ -1,14 +1,11 @@
 package br.com.fiap.dao;
 
-import io.github.cdimascio.dotenv.Dotenv;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectionFactory {
     private static Connection connection;
-    private static final Dotenv dotenv = Dotenv.load();
 
     public static void closeConnection() {
         try {
