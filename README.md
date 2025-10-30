@@ -1,85 +1,163 @@
 # megafarma
 
-Este projeto é um sistema acadêmico desenvolvido para a disciplina de *JAVA* na FIAP. O objetivo é aplicar conceitos de desenvolvimento backend utilizando o framework Quarkus, explorando práticas modernas de APIs REST, persistência e empacotamento de aplicações Java.
+Este projeto é um sistema acadêmico desenvolvido para a disciplina de *JAVA* na FIAP. O objetivo é aplicar conceitos de desenvolvimento backend utilizando o framework Quarkus, organizando o código em camadas (TO, DAO, BO, Resource) e expondo uma API REST para gerenciamento de remédios, clientes, vendas e itens vendidos.
 
-## 🏗️ Sobre a estrutura
+## 🏗️ Estrutura do projeto
 
-O projeto implementa uma API REST para consulta de remédios, utilizando a seguinte estrutura de classes:
+O projeto segue a separação de responsabilidades em camadas:
 
-- 💊 **RemedioTO.java**: Classe de transferência de dados (TO - Transfer Object) que representa o remédio, com atributos como código, nome, preço, data de fabricação e validade.
-- 🗄️ **RemedioDAO.java**: Responsável por simular o acesso a dados, retornando uma lista de remédios pré-cadastrados em memória.
-- ⚙️ **RemedioBO.java**: Camada de regras de negócio (BO - Business Object), que faz a ponte entre o DAO e a camada de recursos REST.
-- 🌐 **RemedioResource.java**: Classe que expõe o endpoint REST `/megafarma`, permitindo consultar todos os remédios cadastrados via requisição HTTP GET.
+- TO (Transfer Object): classes de transferência de dados (ex.: `RemedioTO`, `ClienteTO`, `VendaTO`, `ItensVendidosTO`).
+- DAO (Data Access Object): acesso ao banco / SQL direto (`*DAO.java`).
+- BO (Business Object): regras de negócio e ponte entre Resource e DAO (`*BO.java`).
+- Resource: endpoints REST usando JAX-RS/Quarkus (`*Resource.java`).
 
-Esse fluxo segue boas práticas de separação de responsabilidades, facilitando a manutenção e evolução do sistema.
+Arquivos principais recém-alinhados ao padrão do projeto:
+- `RemedioTO`, `RemedioDAO`, `RemedioBO`, `RemedioResource` (modelo)
+- `ClienteTO`, `ClienteDAO`, `ClienteBO`, `ClienteResource`
+- `VendaTO`, `VendaDAO`, `VendaBO`, `VendaResource`
+- `ItensVendidosTO`, `ItensVendidosDAO`, `ItensVendidosBO`, `ItensVendidosResource`
 
-## 🚀 Sobre o Quarkus
+## 📦 Tabelas (DDL)
 
-Este projeto utiliza o Quarkus, o Supersonic Subatomic Java Framework. O Quarkus é focado em oferecer alta performance, baixo consumo de memória e inicialização rápida, sendo ideal para aplicações cloud-native e microsserviços.
+Tabelas usadas no projeto (exemplo):
 
-Saiba mais em: <https://quarkus.io/>
+CREATE TABLE DDD_CLIENTES (
+    CODIGO NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    NOME VARCHAR2(100 BYTE),
+    CPF VARCHAR2(20 BYTE),
+    EMAIL VARCHAR2(50 BYTE),
+    DATA_DE_NASCIMENTO DATE
+);
 
-## 🛠️ Como rodar a aplicação em modo desenvolvimento
+CREATE TABLE DDD_VENDAS (
+    CODIGO NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    DATA_DA_VENDA DATE,
+    CODCLIENTE NUMBER,
+    CONSTRAINT FK_VENDAS_CLIENTE FOREIGN KEY (CODCLIENTE) REFERENCES DDD_CLIENTES(CODIGO)
+);
 
-Você pode rodar a aplicação em modo dev, que permite live coding, usando:
+CREATE TABLE DDD_ITENSVENDIDOS (
+    CODVENDA NUMBER,
+    CODREMEDIO NUMBER,
+    QUANTIDADE NUMBER,
+    CONSTRAINT PK_ITENSVENDIDOS PRIMARY KEY (CODVENDA, CODREMEDIO),
+    CONSTRAINT FK_ITENSVENDIDOS_VENDA FOREIGN KEY (CODVENDA) REFERENCES DDD_VENDAS(CODIGO),
+    CONSTRAINT FK_ITENSVENDIDOS_REMEDIO FOREIGN KEY (CODREMEDIO) REFERENCES DDD_REMEDIOS(CODIGO)
+);
 
-```shell
-./mvnw quarkus:dev
+(Existe também a tabela `DDD_REMEDIOS` usada pelo módulo de remédios.)
+
+## 🌐 Endpoints REST (padrão)
+
+Cada recurso segue o padrão definido no `RemedioResource` (mesma convenção e códigos HTTP):
+
+- Remédios
+  - GET  /megafarma                → listar todos
+  - GET  /megafarma/{codigo}      → obter por código
+  - POST /megafarma               → criar (recebe JSON, validações via `@Valid`)
+  - PUT  /megafarma/{codigo}      → atualizar (recebe JSON)
+  - DELETE /megafarma/{codigo}    → excluir
+
+- Clientes
+  - GET  /clientes
+  - GET  /clientes/{codigo}
+  - POST /clientes
+  - PUT  /clientes/{codigo}
+  - DELETE /clientes/{codigo}
+
+- Vendas
+  - GET  /vendas
+  - GET  /vendas/{codigo}
+  - POST /vendas
+  - PUT  /vendas/{codigo}
+  - DELETE /vendas/{codigo}
+
+- Itens Vendidos (chave composta codVenda/codRemedio)
+  - GET  /itensvendidos
+  - GET  /itensvendidos/{codVenda}/{codRemedio}
+  - POST /itensvendidos
+  - PUT  /itensvendidos/{codVenda}/{codRemedio}
+  - DELETE /itensvendidos/{codVenda}/{codRemedio}
+
+Observações:
+- Os `Resource` usam `@Valid` nos parâmetros de entrada para aplicar as constraints definidas nos TOs.
+- As respostas seguem o mesmo padrão do `RemedioResource`: `ok()` para sucesso na consulta, `created(null)` para criação/atualização bem-sucedida, `status(204)` para exclusão bem-sucedida, `status(400)` para requisições inválidas e `status(404)` quando o recurso não é encontrado.
+
+## 🗓 Convenção de datas e persistência
+
+- As classes TO usam `java.time.LocalDate` para representar datas (ex.: `dataDeFabricacao`, `dataDeValidade`, `dataDeNascimento`, `dataDaVenda`).
+- Nos DAOs, a leitura é feita com `rs.getDate("coluna").toLocalDate()`.
+- Ao salvar/atualizar, os DAOs usam `ps.setDate(index, java.sql.Date.valueOf(localDate))` (sem condicionais), garantindo o mesmo comportamento do `RemedioDAO`.
+
+## ✅ Validações (jakarta.validation)
+
+As classes TO possuem anotações de validação seguindo o padrão do `RemedioTO`:
+- Strings: `@NotBlank`, `@Size(max = ...)`, `@Email` quando aplicável.
+- Datas: `@NotNull`, `@Past` ou `@PastOrPresent` conforme o caso.
+- Números: `@NotNull`, `@Positive` / `@PositiveOrZero` quando necessário.
+
+Isso faz com que requisições inválidas retornem `400 Bad Request` automaticamente nas resources que usam `@Valid`.
+
+## 🧭 Camada de negócio (BO)
+
+- Os `*BO` estão uniformizados: cada método instancia o DAO correspondente e delega as operações.
+- O `RemedioBO` foi alinhado para inicializar o `RemedioDAO` também dentro do `save()` para evitar inconsistências.
+
+## 🛠️ Como executar (Windows / cmd.exe)
+
+No Windows (cmd.exe) use os scripts `mvnw.cmd` incluídos no projeto:
+
+- Rodar em modo dev (hot reload):
+
+```cmd
+mvnw.cmd quarkus:dev
 ```
 
-> **Nota:** O Quarkus possui uma Dev UI disponível apenas em modo dev: <http://localhost:8080/q/dev/>
+- Empacotar o projeto:
 
-## 📦 Empacotando e executando a aplicação
-
-Para empacotar a aplicação:
-
-```shell
-./mvnw package
+```cmd
+mvnw.cmd package
 ```
 
-O comando acima gera o arquivo `quarkus-run.jar` em `target/quarkus-app/`.
+- Executar o quarkus-run.jar gerado:
 
-Para rodar:
-
-```shell
-java -jar target/quarkus-app/quarkus-run.jar
+```cmd
+java -jar target\quarkus-app\quarkus-run.jar
 ```
 
-Se quiser gerar um _über-jar_ (jar único com dependências):
+- Gerar um uber-jar:
 
-```shell
-./mvnw package -Dquarkus.package.jar.type=uber-jar
+```cmd
+mvnw.cmd package -Dquarkus.package.jar.type=uber-jar
 ```
 
-E execute com:
+- Executar o runner (após gerar uber-jar):
 
-```shell
-java -jar target/*-runner.jar
+```cmd
+java -jar target\* -runner.jar
 ```
 
-## 🧊 Criando um executável nativo
+## 🔎 Testes rápidos via curl (exemplos)
 
-Para criar um executável nativo (requer GraalVM):
+Listar remédios:
 
-```shell
-./mvnw package -Dnative
+```cmd
+curl -X GET http://localhost:8080/megafarma -H "Accept: application/json"
 ```
 
-Ou, para buildar em container (sem GraalVM local):
+Criar cliente (exemplo JSON):
 
-```shell
-./mvnw package -Dnative -Dquarkus.native.container-build=true
+```cmd
+curl -X POST http://localhost:8080/clientes -H "Content-Type: application/json" -d "{\"nome\":\"Fulano\",\"cpf\":\"12345678900\",\"email\":\"fulano@exemplo.com\",\"dataDeNascimento\":\"1990-01-01\"}"
 ```
 
-O executável estará em `./target/megafarma-1.0.0-SNAPSHOT-runner`
+> Observação: ajuste as URLs/JSON conforme o seu cliente HTTP preferido.
 
-Mais informações: <https://quarkus.io/guides/maven-tooling>
-
-## 📚 Guias úteis do Quarkus
-
-- REST: <https://quarkus.io/guides/rest>
-- REST Jackson: <https://quarkus.io/guides/rest#json-serialisation>
+## 📚 Referências
+- Quarkus: https://quarkus.io/
+- JAX-RS: APIs REST padrão em Java
+- Jakarta Validation: https://jakarta.ee/specifications/validation/
 
 ---
 
-Projeto acadêmico - FIAP | Engenharia de Software
+Projeto acadêmico - FIAP | Java
