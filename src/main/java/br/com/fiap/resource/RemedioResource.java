@@ -9,7 +9,7 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.ArrayList;
 
-@Path("/megafarma")
+@Path("/produtos")
 public class RemedioResource {
     private RemedioBO  remedioBO = new RemedioBO();
 

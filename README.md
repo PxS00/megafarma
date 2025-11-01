@@ -58,6 +58,8 @@ Cada recurso segue o padrão definido no `RemedioResource` (mesma convenção e 
   - PUT  /megafarma/{codigo}      → atualizar (recebe JSON)
   - DELETE /megafarma/{codigo}    → excluir
 
+  Observação: o `RemedioTO` agora tem o campo `imagem` que deve conter um link HTTP ou HTTPS (ex.: `https://exemplo.com/img.jpg`)
+
 - Clientes
   - GET  /clientes
   - GET  /clientes/{codigo}
@@ -143,6 +145,12 @@ Listar remédios:
 
 ```cmd
 curl -X GET http://localhost:8080/megafarma -H "Accept: application/json"
+```
+
+Criar remédio (exemplo JSON incluindo imagem):
+
+```cmd
+curl -X POST http://localhost:8080/megafarma -H "Content-Type: application/json" -d "{\"nome\":\"Paracetamol\",\"preco\":10.5,\"dataDeFabricacao\":\"2024-01-01\",\"dataDeValidade\":\"2026-01-01\",\"imagem\":\"https://exemplo.com/images/paracetamol.jpg\"}"
 ```
 
 Criar cliente (exemplo JSON):

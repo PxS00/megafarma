@@ -21,6 +21,7 @@ public class ClienteBO {
     }
 
     public ClienteTO save(ClienteTO cliente){
+        clienteDAO = new ClienteDAO();
         // Lógica de negócio pode ser adicionada aqui
         return clienteDAO.save(cliente);
     }

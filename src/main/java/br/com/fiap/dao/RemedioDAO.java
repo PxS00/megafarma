@@ -22,6 +22,7 @@ public class RemedioDAO {
                     remedio.setPreco(rs.getDouble("preco"));
                     remedio.setDataDeFabricacao(rs.getDate("data_de_fabricacao").toLocalDate());
                     remedio.setDataDeValidade(rs.getDate("data_de_validade").toLocalDate());
+                    remedio.setImagem(rs.getString("imagem"));
 
                     remedios.add(remedio);
                 }
@@ -53,6 +54,7 @@ public class RemedioDAO {
                 remedio.setPreco(rs.getDouble("preco"));
                 remedio.setDataDeFabricacao(rs.getDate("data_de_fabricacao").toLocalDate());
                 remedio.setDataDeValidade(rs.getDate("data_de_validade").toLocalDate());
+                remedio.setImagem(rs.getString("imagem"));
             } else {
                 return null;
             }
@@ -65,12 +67,13 @@ public class RemedioDAO {
     }
 
     public RemedioTO save(RemedioTO remedio) {
-        String sql = "insert into ddd_remedios(nome, preco, data_de_fabricacao, data_de_validade) values(?,?,?,?)";
+        String sql = "insert into ddd_remedios(nome, preco, data_de_fabricacao, data_de_validade, imagem) values(?,?,?,?,?)";
         try (PreparedStatement ps = ConnectionFactory.getConnection().prepareStatement(sql)) {
             ps.setString(1, remedio.getNome());
             ps.setDouble(2, remedio.getPreco());
             ps.setDate(3, Date.valueOf(remedio.getDataDeFabricacao()));
             ps.setDate(4, Date.valueOf(remedio.getDataDeValidade()));
+            ps.setString(5, remedio.getImagem());
             if (ps.executeUpdate() > 0) {
                 return remedio;
             } else {
@@ -97,13 +100,14 @@ public class RemedioDAO {
     }
 
     public RemedioTO update(RemedioTO remedio) {
-        String sql = "update ddd_remedios set nome=?, preco=?, data_de_fabricacao=?, data_de_validade=? where codigo=?";
+        String sql = "update ddd_remedios set nome=?, preco=?, data_de_fabricacao=?, data_de_validade=?, imagem=? where codigo=?";
         try (PreparedStatement ps = ConnectionFactory.getConnection().prepareStatement(sql)) {
             ps.setString(1, remedio.getNome());
             ps.setDouble(2, remedio.getPreco());
             ps.setDate(3, Date.valueOf(remedio.getDataDeFabricacao()));
             ps.setDate(4, Date.valueOf(remedio.getDataDeValidade()));
-            ps.setLong(5, remedio.getCodigo());
+            ps.setString(5, remedio.getImagem());
+            ps.setLong(6, remedio.getCodigo());
             if (ps.executeUpdate() > 0) {
                 return remedio;
             } else {

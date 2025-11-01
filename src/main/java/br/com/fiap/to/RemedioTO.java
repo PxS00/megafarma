@@ -15,13 +15,16 @@ public class RemedioTO {
     private LocalDate dataDeFabricacao;
     @FutureOrPresent
     private LocalDate dataDeValidade;
+    @NotBlank
+    private String imagem;
 
-    public RemedioTO(Long codigo, String nome, Double preco, LocalDate dataDeFabricacao, LocalDate dataDeValidade) {
+    public RemedioTO(Long codigo, String nome, Double preco, LocalDate dataDeFabricacao, LocalDate dataDeValidade, String imagem) {
         this.codigo = codigo;
         this.nome = nome;
         this.preco = preco;
         this.dataDeFabricacao = dataDeFabricacao;
         this.dataDeValidade = dataDeValidade;
+        this.imagem = imagem;
     }
 
     public RemedioTO() {
@@ -65,5 +68,13 @@ public class RemedioTO {
 
     public void setDataDeValidade(LocalDate dataDeValidade) {
         this.dataDeValidade = dataDeValidade;
+    }
+
+    public String getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(String imagem) {
+        this.imagem = imagem;
     }
 }

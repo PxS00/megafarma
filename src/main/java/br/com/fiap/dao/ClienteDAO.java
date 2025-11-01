@@ -22,6 +22,8 @@ public class ClienteDAO {
                     cliente.setCpf(rs.getString("cpf"));
                     cliente.setEmail(rs.getString("email"));
                     cliente.setDataDeNascimento(rs.getDate("data_de_nascimento").toLocalDate());
+                    cliente.setSenha(rs.getString("senha"));
+                    cliente.setImagem(rs.getString("imagem"));
 
                     clientes.add(cliente);
                 }
@@ -53,6 +55,8 @@ public class ClienteDAO {
                 cliente.setCpf(rs.getString("cpf"));
                 cliente.setEmail(rs.getString("email"));
                 cliente.setDataDeNascimento(rs.getDate("data_de_nascimento").toLocalDate());
+                cliente.setSenha(rs.getString("senha"));
+                cliente.setImagem(rs.getString("imagem"));
             } else {
                 return null;
             }
@@ -65,12 +69,14 @@ public class ClienteDAO {
     }
 
     public ClienteTO save(ClienteTO cliente) {
-        String sql = "insert into ddd_clientes(nome, cpf, email, data_de_nascimento) values(?,?,?,?)";
+        String sql = "insert into ddd_clientes(nome, cpf, email, data_de_nascimento, senha, imagem) values(?,?,?,?,?,?)";
         try (PreparedStatement ps = ConnectionFactory.getConnection().prepareStatement(sql)) {
             ps.setString(1, cliente.getNome());
             ps.setString(2, cliente.getCpf());
             ps.setString(3, cliente.getEmail());
             ps.setDate(4, Date.valueOf(cliente.getDataDeNascimento()));
+            ps.setString(5, cliente.getSenha());
+            ps.setString(6, cliente.getImagem());
             if (ps.executeUpdate() > 0) {
                 return cliente;
             } else {
@@ -98,13 +104,15 @@ public class ClienteDAO {
     }
 
     public ClienteTO update(ClienteTO cliente) {
-        String sql = "update ddd_clientes set nome=?, cpf=?, email=?, data_de_nascimento=? where codigo=?";
+        String sql = "update ddd_clientes set nome=?, cpf=?, email=?, data_de_nascimento=?, senha=?, imagem=? where codigo=?";
         try (PreparedStatement ps = ConnectionFactory.getConnection().prepareStatement(sql)) {
             ps.setString(1, cliente.getNome());
             ps.setString(2, cliente.getCpf());
             ps.setString(3, cliente.getEmail());
             ps.setDate(4, Date.valueOf(cliente.getDataDeNascimento()));
-            ps.setLong(5, cliente.getCodigo());
+            ps.setString(5, cliente.getSenha());
+            ps.setString(6, cliente.getImagem());
+            ps.setLong(7, cliente.getCodigo());
             if (ps.executeUpdate() > 0) {
                 return cliente;
             } else {
