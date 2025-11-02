@@ -21,10 +21,7 @@ public class RemedioBO {
     }
 
     public RemedioTO save(RemedioTO remedio){
-        // Lógica de negócio pode ser adicionada aqui
-        // if (remedio.getDataDeValidade().isBefore(LocalDate.now())){
-        //    return null;
-        // }
+        remedioDAO = new RemedioDAO();
         return remedioDAO.save(remedio);
     }
 
