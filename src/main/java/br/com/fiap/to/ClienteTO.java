@@ -8,6 +8,7 @@ public class ClienteTO {
     @NotBlank
     private String nome;
     @NotBlank
+    @Size(min = 11, max = 14)
     private String cpf;
     @NotBlank
     @Email
@@ -15,11 +16,9 @@ public class ClienteTO {
     @NotNull
     @Past
     private LocalDate dataDeNascimento;
-
     @NotBlank
+    @Size(min = 8)
     private String senha;
-
-    @NotBlank
     private String imagem;
 
     public ClienteTO() {
