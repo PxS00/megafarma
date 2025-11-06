@@ -16,22 +16,21 @@ public class ClienteTO {
     @NotNull
     @Past
     private LocalDate dataDeNascimento;
+
     @NotBlank
     @Size(min = 8)
     private String senha;
-    private String imagem;
 
     public ClienteTO() {
     }
 
-    public ClienteTO(Long codigo, String nome, String cpf, String email, LocalDate dataDeNascimento, String senha, String imagem) {
+    public ClienteTO(Long codigo, String nome, String cpf, String email, LocalDate dataDeNascimento, String senha) {
         this.codigo = codigo;
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
         this.dataDeNascimento = dataDeNascimento;
         this.senha = senha;
-        this.imagem = imagem;
     }
 
     public Long getCodigo() {
@@ -80,13 +79,5 @@ public class ClienteTO {
 
     public void setSenha(String senha) {
         this.senha = senha;
-    }
-
-    public String getImagem() {
-        return imagem;
-    }
-
-    public void setImagem(String imagem) {
-        this.imagem = imagem;
     }
 }
